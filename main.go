@@ -5,19 +5,16 @@ import (
 )
 
 func main() {
-	/* 	client := client.New("http://localhost:3000")
-
-	   	price, err := client.FetchPrice(context.Background(), "ET")
-	   	if err != nil {
-	   		log.Fatal(err)
-	   	}
-
-	   	fmt.Printf("%+v\n", price) */
-	listenAddr := flag.String("listenaddr", ":3000", "listen address, the service is running")
+	var (
+		jsonAddr = flag.String("json", ":3000", "listen address of the json transport")
+		grpcAddr = flag.String("grpc", ":4000", "listen address of the gRPC transport")
+	)
 	flag.Parse()
 
-	svc := NewLoggingService(NewMetricService(&priceFetcher{}))
+	svc := NewLoggingService(&priceFetcher{})
 
-	server := NewJSONAPIServer(*listenAddr, svc)
-	server.Run()
+	jsonServer := NewJSONAPIServer(*jsonAddr, svc)
+	jsonServer.Run()
+
+	go makeGRPCServerAndRun(*grpcAddr, svc)
 }
