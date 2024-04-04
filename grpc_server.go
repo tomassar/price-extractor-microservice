@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"math/rand"
 	"net"
 
 	"github.com/tomassar/crypto-price-fetcher-microservice/proto"
@@ -35,6 +36,9 @@ func NewGRPCPriceFetcherService(svc PriceFetcher) *GRPCPriceFetcherServer {
 }
 
 func (s *GRPCPriceFetcherServer) FetchPrice(ctx context.Context, req *proto.PriceRequest) (*proto.PriceResponse, error) {
+	reqid := rand.Intn(10000)
+	ctx = context.WithValue(ctx, "requestID", reqid)
+
 	price, err := s.svc.FetchPrice(ctx, req.GetTicker())
 	if err != nil {
 		return nil, err
