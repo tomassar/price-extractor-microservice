@@ -12,3 +12,4 @@ RUN go build -o /pricefetcher
 EXPOSE 3000
 
 CMD [ "/pricefetcher"]
+hola
